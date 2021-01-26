@@ -1,4 +1,4 @@
-const Config = {
+const arundelConfig = {
     max_lootable_spots: 10,
     tiles: {
         floor: ".",
@@ -53,7 +53,7 @@ Game._generateMap = function() {
 
         var key = `${x},${y}`;
         walkableCells.push(key);
-        this.map[key] = Config.tiles.floor;
+        this.map[key] = arundelConfig.tiles.floor;
     }
     digger.create(digCallback.bind(this));
     this._generateLootables(walkableCells);
@@ -72,10 +72,10 @@ Game._createBeing = function(being, walkableCells) {
 }
 
 Game._generateLootables = function(walkableCells) {
-    for (var i = 0; i < Config.max_lootable_spots; i++) {
+    for (var i = 0; i < arundelConfig.max_lootable_spots; i++) {
         var index = Math.floor(ROT.RNG.getUniform() * walkableCells.length);
         var key = walkableCells.splice(index, 1)[0];
-        this.map[key] = Config.tiles.lootable;
+        this.map[key] = arundelConfig.tiles.lootable;
     }
 }
 
@@ -95,7 +95,7 @@ var Player = function(x, y) {
 }
 
 Player.prototype._draw = function() {
-    Game.display.draw(this._x, this._y, Config.tiles.player, Config.colors.player);
+    Game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
 }
 
 Player.prototype.act = function() {
@@ -109,11 +109,11 @@ Player.prototype.getY = function() { return this._y; }
 Player.prototype.handleEvent = function(e) {
     // process user input
     var code = e.keyCode;
-    if (!(code in Config.directionKeyMap)) {
+    if (!(code in arundelConfig.directionKeyMap)) {
         return; // don't accept bad input
     }
 
-    var diff = ROT.DIRS[8][Config.directionKeyMap[code]];
+    var diff = ROT.DIRS[8][arundelConfig.directionKeyMap[code]];
     var newX = this._x + diff[0];
     var newY = this._y + diff[1];
 
@@ -137,7 +137,7 @@ var Enemy = function(x, y) {
 }
 
 Enemy.prototype._draw = function() {
-    Game.display.draw(this._x, this._y, Config.tiles.enemy, Config.colors.enemy);
+    Game.display.draw(this._x, this._y, arundelConfig.tiles.enemy, arundelConfig.colors.enemy);
 }
 
 Enemy.prototype.act = function() {
