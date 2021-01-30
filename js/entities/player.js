@@ -1,5 +1,5 @@
 import { Game } from '../main.js';
-import { configObject as arundelConfig } from '../config';
+import { configObject as arundelConfig } from '../config.js';
 
 var Player = function(x, y) {
     this._x = x;

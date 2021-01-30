@@ -1,5 +1,6 @@
 import { configObject as arundelConfig } from './config.js';
 import { Enemy } from './entities/enemy.js';
+import { Player } from './entities/player.js';
 
 window.loadGame = function() {
     console.log("Initializing Game...");
