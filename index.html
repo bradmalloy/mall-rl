@@ -8,5 +8,17 @@
     <body onload="loadGame()">
         <h1>Arundel Center</h1>
     </body>
+    <script type="text/javascript">
+        window.addEventListener("keydown", function(e) {
+            var code = e.keyCode;
+
+            var vk = "?"; /* find the corresponding constant */
+            for (var name in ROT.KEYS) {
+                if (ROT.KEYS[name] == code && name.indexOf("VK_") == 0) { vk = name; }
+            }
+
+            console.debug("Keydown: code is " + code + " (" + vk + ")");
+        });
+    </script>
 </html>
 
