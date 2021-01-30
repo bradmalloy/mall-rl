@@ -4,19 +4,25 @@ import { Player } from './entities/player.js';
 
 window.loadGame = function() {
     console.log("Initializing Game...");
-    Game.init();
+    let g = new Game();
+    // g.init();
 }
 
-var Game = {
-    display: null,
-    map: {},
-    mapExit: null,
-    player: null,
-    engine: null,
-    loot: null,
-    enemies: [],
+class Game {
+    constructor() {
+        this.display = null;
+        this.map = {};
+        this.walkableCells = [];
+        this.mapExit = null;
+        this.player = null;
+        this.engine = null;
+        this.loot = [];
+        this.enemies = [];
+        this.init();
+    }
+    
 
-    init: function() {
+    init() {
         this.display = new ROT.Display();
         document.body.appendChild(this.display.getContainer());
         this._generateMap();
@@ -28,65 +34,95 @@ var Game = {
         this.engine = new ROT.Engine(scheduler);
         this.engine.start();
     }
-}
 
-Game._generateMap = function() {
-    var digger = new ROT.Map.Digger();
-    var walkableCells = [];
+    _generateMap() {
+        // Clear any old stuff
+        this.walkableCells = [];
+        this.map = {};
+        this.mapExit = null;
+        this.enemies = [];
 
-    var digCallback = function(x, y, value) {
-        if (value) {
-            return; // don't store walls
+        // Create the map-gen algo
+        var digger = new ROT.Map.Digger();
+    
+        var digCallback = function(x, y, value) {
+            if (value) {
+                return; // don't store walls
+            }
+    
+            var key = `${x},${y}`;
+            this.walkableCells.push(key);
+            this.map[key] = arundelConfig.tiles.floor;
         }
-
-        var key = `${x},${y}`;
-        walkableCells.push(key);
-        this.map[key] = arundelConfig.tiles.floor;
+        digger.create(digCallback.bind(this));
+        this._generateLootables();
+        this._placeMapExit();
+        this._placeActors();
+        this._drawWholeMap();
     }
-    digger.create(digCallback.bind(this));
-    this._generateLootables(walkableCells);
-    this._placeMapExit(walkableCells);
-    this._drawWholeMap();
-    this.player = this._createBeing(Player, walkableCells);
-    for (let i = 0; i < arundelConfig.enemiesPerLevel; i++) {
-        this.enemies.push(this._createBeing(Enemy, walkableCells));
+
+    _placeActors() {
+        if (!this.player) {
+            console.log("Player doesn't exist, spawning.");
+            this.player = this._createBeing(Player);
+        } else {
+            var key = this._spliceEmptyWalkableCell();
+            console.log("Player already exists, repositioning to: " + key);
+            var parts = key.split(",");
+            var x = parseInt(parts[0]);
+            var y = parseInt(parts[1]);
+            this.player.setPosition(x, y);
+        }
+        for (let i = 0; i < arundelConfig.enemiesPerLevel; i++) {
+            this.enemies.push(this._createBeing(Enemy));
+        }
     }
-}
 
-Game._createBeing = function(being, walkableCells) {
-    var index = Math.floor(ROT.RNG.getUniform() * walkableCells.length);
-    var key = walkableCells.splice(index, 1)[0];
-    var parts = key.split(",");
-    var x = parseInt(parts[0]);
-    var y = parseInt(parts[1]);
-    return new being(x, y);
-}
-
-Game._generateLootables = function(walkableCells) {
-    for (var i = 0; i < arundelConfig.maxLootableSpots; i++) {
-        var index = Math.floor(ROT.RNG.getUniform() * walkableCells.length);
-        var key = walkableCells.splice(index, 1)[0];
-        this.map[key] = arundelConfig.tiles.lootable;
-    }
-}
-
-Game.finishLevel = function() {
-    // todo
-}
-
-Game._placeMapExit = function(walkableCells) {
-    var index = Math.floor(ROT.RNG.getUniform() * walkableCells.length);
-    var key = walkableCells.splice(index, 1)[0];
-    this.map[key] = arundelConfig.tiles.stairs;
-    this.mapExit = key;
-}
-
-Game._drawWholeMap = function() {
-    for (var key in this.map) {
+    _createBeing(being) {
+        var index = Math.floor(ROT.RNG.getUniform() * this.walkableCells.length);
+        var key = this.walkableCells.splice(index, 1)[0];
         var parts = key.split(",");
         var x = parseInt(parts[0]);
         var y = parseInt(parts[1]);
-        this.display.draw(x, y, this.map[key]);
+        console.log("Placing being at: " + key);
+        return new being(x, y, this);
+    }
+
+    _generateLootables() {
+        for (var i = 0; i < arundelConfig.maxLootableSpots; i++) {
+            var key = this._spliceEmptyWalkableCell();
+            this.map[key] = arundelConfig.tiles.lootable;
+        }
+    }
+
+    finishLevel() {
+        this.engine.lock();
+        this._generateMap();
+        this.engine.unlock();
+    }
+
+    _placeMapExit() {
+        var key = this._spliceEmptyWalkableCell();
+        this.map[key] = arundelConfig.tiles.stairs;
+        this.mapExit = key;
+    }
+
+    _drawWholeMap() {
+        // clear the map beforehand
+        this.display.clear();
+        for (var key in this.map) {
+            var parts = key.split(",");
+            var x = parseInt(parts[0]);
+            var y = parseInt(parts[1]);
+            this.display.draw(x, y, this.map[key]);
+        }
+    }
+
+    _spliceEmptyWalkableCell() {
+        var index = Math.floor(ROT.RNG.getUniform() * this.walkableCells.length);
+        var key = this.walkableCells.splice(index, 1)[0];
+        console.log("spliced an empty walkable at: " + key);
+        return key;
     }
 }
 

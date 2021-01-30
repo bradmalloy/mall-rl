@@ -1,5 +1,5 @@
 const configObject = {
-    maxLootableSpots: 10,
+    maxLootableSpots: 0,
     tiles: {
         floor: ".",
         lootable: "*",
@@ -23,7 +23,7 @@ const configObject = {
         65: 6, // a
         81: 7, // q
     },
-    enemiesPerLevel: 2
+    enemiesPerLevel: 0
 }
 
 export{ configObject };
