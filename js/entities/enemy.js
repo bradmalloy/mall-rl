@@ -1,4 +1,5 @@
 import { Game } from '../main.js';
+import { configObject as arundelConfig } from '../config.js';
 
 var Enemy = function(x, y) {
     this._x = x;
@@ -38,4 +39,4 @@ Enemy.prototype.act = function() {
     }
 }
 
-export default Enemy;
+export { Enemy };

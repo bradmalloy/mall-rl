@@ -1,4 +1,4 @@
-import arundelConfig from './config.js';
+import { configObject as arundelConfig } from './config.js';
 import { Enemy } from './entities/enemy.js';
 
 window.loadGame = function() {
@@ -112,3 +112,5 @@ Player.prototype.handleEvent = function(e) {
     window.removeEventListener("keydown", this);
     Game.engine.unlock();
 }
+
+export { Game };

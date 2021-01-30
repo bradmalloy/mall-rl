@@ -23,4 +23,4 @@ const configObject = {
     }
 }
 
-export default configObject;
+export{ configObject };
