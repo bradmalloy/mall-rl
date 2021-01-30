@@ -32,6 +32,11 @@ class Player {
             return; // don't move
         }
 
+        if (newKey == Game.mapExit) {
+            console.log("Play found an exit!");
+            Game.finishLevel();
+        }
+
         Game.display.draw(this._x, this._y, Game.map[`${this._x},${this._y}`]);
         this._x = newX;
         this._y = newY;

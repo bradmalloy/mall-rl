@@ -4,11 +4,13 @@ const configObject = {
         floor: ".",
         lootable: "*",
         player: "@",
-        enemy: "t"
+        enemy: "t",
+        stairs: "#"
     },
     colors: {
         player: "#ff0",
-        enemy: "#cc0000"
+        enemy: "#cc0000",
+        stairs: "#00cccc"
     },
     // rot.js 8-topology, clockwise, starting at the top
     directionKeyMap: {
@@ -21,7 +23,7 @@ const configObject = {
         65: 6, // a
         81: 7, // q
     },
-    enemiesPerLevel: 5
+    enemiesPerLevel: 2
 }
 
 export{ configObject };

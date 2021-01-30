@@ -10,9 +10,11 @@ window.loadGame = function() {
 var Game = {
     display: null,
     map: {},
+    mapExit: null,
     player: null,
     engine: null,
     loot: null,
+    enemies: [],
 
     init: function() {
         this.display = new ROT.Display();
@@ -20,7 +22,9 @@ var Game = {
         this._generateMap();
         var scheduler = new ROT.Scheduler.Simple();
         scheduler.add(this.player, true);
-        scheduler.add(this.enemy, true);
+        this.enemies.forEach((enemy) => {
+            scheduler.add(enemy, true);
+        });
         this.engine = new ROT.Engine(scheduler);
         this.engine.start();
     }
@@ -41,10 +45,11 @@ Game._generateMap = function() {
     }
     digger.create(digCallback.bind(this));
     this._generateLootables(walkableCells);
+    this._placeMapExit(walkableCells);
     this._drawWholeMap();
     this.player = this._createBeing(Player, walkableCells);
-    for (let i = 0; i <= arundelConfig.enemiesPerLevel; i++) {
-        this.enemy = this._createBeing(Enemy, walkableCells);
+    for (let i = 0; i < arundelConfig.enemiesPerLevel; i++) {
+        this.enemies.push(this._createBeing(Enemy, walkableCells));
     }
 }
 
@@ -63,6 +68,17 @@ Game._generateLootables = function(walkableCells) {
         var key = walkableCells.splice(index, 1)[0];
         this.map[key] = arundelConfig.tiles.lootable;
     }
+}
+
+Game.finishLevel = function() {
+    // todo
+}
+
+Game._placeMapExit = function(walkableCells) {
+    var index = Math.floor(ROT.RNG.getUniform() * walkableCells.length);
+    var key = walkableCells.splice(index, 1)[0];
+    this.map[key] = arundelConfig.tiles.stairs;
+    this.mapExit = key;
 }
 
 Game._drawWholeMap = function() {
