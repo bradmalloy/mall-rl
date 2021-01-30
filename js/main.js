@@ -43,7 +43,9 @@ Game._generateMap = function() {
     this._generateLootables(walkableCells);
     this._drawWholeMap();
     this.player = this._createBeing(Player, walkableCells);
-    this.enemy = this._createBeing(Enemy, walkableCells);
+    for (let i = 0; i <= arundelConfig.enemiesPerLevel; i++) {
+        this.enemy = this._createBeing(Enemy, walkableCells);
+    }
 }
 
 Game._createBeing = function(being, walkableCells) {
@@ -56,7 +58,7 @@ Game._createBeing = function(being, walkableCells) {
 }
 
 Game._generateLootables = function(walkableCells) {
-    for (var i = 0; i < arundelConfig.max_lootable_spots; i++) {
+    for (var i = 0; i < arundelConfig.maxLootableSpots; i++) {
         var index = Math.floor(ROT.RNG.getUniform() * walkableCells.length);
         var key = walkableCells.splice(index, 1)[0];
         this.map[key] = arundelConfig.tiles.lootable;
