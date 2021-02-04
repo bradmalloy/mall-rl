@@ -24,7 +24,7 @@ class Game {
 
     init() {
         this.display = new ROT.Display();
-        document.body.appendChild(this.display.getContainer());
+        document.getElementById("gameContainer").appendChild(this.display.getContainer());
         this._generateMap();
         var scheduler = new ROT.Scheduler.Simple();
         scheduler.add(this.player, true);

@@ -1,0 +1,35 @@
+/* Retro-styling, along with NES.css */
+@font-face {
+    font-family: 'Kongtext';
+    src: url('../font/kongtext.ttf') format('truetype');
+}
+  
+h1, p {
+    font-family: 'Kongtext';
+}
+
+/* Sticky header */
+#header {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+}
+
+/* Setup flexbox on main, non-footer, non-header box. */
+#wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-flow: center;
+    align-items: stretch;
+    min-height: 300px;
+}
+
+/* The game renders in this box */
+#gameWrapper {
+    flex-grow: 4;
+}
+
+/* Right-hand game menu */
+#gameMenu {
+    flex-grow: 1;
+}

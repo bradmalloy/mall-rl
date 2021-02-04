@@ -4,10 +4,33 @@
         <title>Arundel Center: A tiny, mall-shaped roguelike in the browser</title>
         <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
         <script src="js/main.js" type="module"></script>
+
+        <!-- NES for styling & components -->
+        <link href="css/nes.min.css" rel="stylesheet" />
+        <link href="css/main.css" rel="stylesheet" />
     </head>
     <body onload="loadGame()">
-        <h1>Arundel Center</h1>
+        <header id="header">
+            <h1>Arundel Center</h1>
+        </header>
+        <div id="wrapper">
+            <div class="nes-container with-title is-rounded">
+                <p class="title">Game</p>
+                <div id="gameContainer"></div>
+            </div>
+            <div id="gameMenu">
+                <div class="nes-container with-title is-rounded">
+                    <p class="title">Menu</p>
+                    <p>Welcome to the Arundel Center mall!</p>
+                    <a class="nes-btn" href="#">Press me!</a>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+
+        </footer>
     </body>
+    <!-- Delete this when done with dev: shows keydown codes. -->
     <script type="text/javascript">
         window.addEventListener("keydown", function(e) {
             var code = e.keyCode;
