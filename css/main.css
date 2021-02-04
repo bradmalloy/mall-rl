@@ -1,11 +1,11 @@
 /* Retro-styling, along with NES.css */
 @font-face {
-    font-family: 'Kongtext';
-    src: url('../font/kongtext.ttf') format('truetype');
+    font-family: 'Press Start 2P';
+    src: url('../font/ps2p.ttf') format('truetype');
 }
   
 h1, p {
-    font-family: 'Kongtext';
+    font-family: 'Press Start 2P';
 }
 
 /* Sticky header */
