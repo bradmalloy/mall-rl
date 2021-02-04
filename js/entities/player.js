@@ -56,6 +56,8 @@ class Player {
         // If the player pressed wait, just draw
         if (arundelConfig.directionKeyMap[code] == 'wait') {
             this._draw();
+            window.removeEventListener("keydown", this);
+            Game.engine.unlock();
             return;
         }
 
