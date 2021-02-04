@@ -39,6 +39,9 @@ const Game = {
         return 1 + Math.floor(Math.random() * Math.floor(dieSize));
     },
 
+    /**
+     * Generate a new map with a random layout, then place loot and actors.
+     */
     _generateMap: function() {
         // Clear any old stuff
         this.walkableCells = [];
@@ -68,6 +71,9 @@ const Game = {
         this._placeAndDrawActors();
     },
 
+    /**
+     * Create or reposition all actors on the map.
+     */
     _placeAndDrawActors: function() {
         if (!this.player) {
             console.log("Player doesn't exist, spawning.");
@@ -86,16 +92,23 @@ const Game = {
         }
     },
 
+    /**
+     * Create a being which can draw itself on the map. This includes
+     * enemies and the player.
+     * @param {class} being a class that has a _draw(), act(), etc. 
+     */
     _createBeing: function(being) {
         var index = Math.floor(ROT.RNG.getUniform() * this.walkableCells.length);
         var key = this.walkableCells.splice(index, 1)[0];
         var parts = key.split(",");
         var x = parseInt(parts[0]);
         var y = parseInt(parts[1]);
-        console.log("Placing being at: " + key);
-        return new being(x, y, this);
+        return new being(x, y);
     },
 
+    /**
+     * Change the map to put down items (not used currently).
+     */
     _generateLootables: function() {
         for (var i = 0; i < arundelConfig.maxLootableSpots; i++) {
             var key = this._spliceEmptyWalkableCell();
@@ -103,18 +116,28 @@ const Game = {
         }
     },
 
+    /**
+     * Called by the Player when they reach the level exit.
+     */
     finishLevel: function() {
         this.engine.lock();
         this._generateMap();
         this.engine.unlock();
     },
 
+    /**
+     * Changes the map tile for the exit, and saves the coordinates.
+     */
     _placeMapExit: function() {
         var key = this._spliceEmptyWalkableCell();
         this.map[key] = arundelConfig.tiles.stairs;
         this.mapExit = key;
     },
 
+    /**
+     * Draws the map, including the walkable tiles and the exit.
+     * Doesn't include actors or other entities.
+     */
     _drawWholeMap: function() {
         // clear the map beforehand
         this.display.clear();
@@ -126,6 +149,11 @@ const Game = {
         }
     },
 
+    /**
+     * Pick a random walkable tile from the map, remove it from the list of 
+     * walkable tiles, and return it. Used to place enemies, the player, and 
+     * the map exit.
+     */
     _spliceEmptyWalkableCell: function() {
         var index = Math.floor(ROT.RNG.getUniform() * this.walkableCells.length);
         var key = this.walkableCells.splice(index, 1)[0];

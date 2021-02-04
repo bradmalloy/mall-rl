@@ -12,7 +12,6 @@ class Player {
         this._draw();
     }
     _draw() {
-        console.debug("Player.draw(): [" + this._x + "," + this._y + "]");
         Game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
     }
     /** Called once per tick? */
