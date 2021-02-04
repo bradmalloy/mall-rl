@@ -8,6 +8,7 @@ class Player {
         this._draw();
     }
     _draw() {
+        console.log(this);
         this._game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
     }
     act() {
@@ -18,10 +19,11 @@ class Player {
     getY() { return this._y; }
     getPosition() { return [this._x, this._y]; }
     setPosition(x, y) {
+        console.log("Setting position to: " + x + "," + y);
         this._x = x; 
         this._y = y;
         this._draw();
-        console.log("Player is at: " + this._x + "," + this._y);
+        console.log("Player setPosition to: " + this._x + "," + this._y);
     }
     handleEvent(e) {
         // process user input
@@ -44,6 +46,7 @@ class Player {
         if (newKey == this._game.mapExit) {
             console.log("Play found an exit!");
             this._game.finishLevel();
+            return; // avoid setting location to old location
         }
 
         // Fill the previous tile with the thing that was underneath
