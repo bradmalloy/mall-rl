@@ -5,7 +5,6 @@ import { Player } from './entities/player.js';
 window.loadGame = function() {
     console.log("Initializing Game...");
     let g = new Game();
-    // g.init();
 }
 
 class Game {
@@ -21,7 +20,6 @@ class Game {
         this.init();
     }
     
-
     init() {
         this.display = new ROT.Display();
         document.getElementById("gameContainer").appendChild(this.display.getContainer());
@@ -41,6 +39,10 @@ class Game {
         this.map = {};
         this.mapExit = null;
         this.enemies = [];
+        if (this.player) {
+            let oldPlayerPos = this.player.getPosition();
+            console.log("oldPlayerPos: " + oldPlayerPos);
+        }
 
         // Create the map-gen algo
         var digger = new ROT.Map.Digger();

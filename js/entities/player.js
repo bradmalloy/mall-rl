@@ -16,6 +16,7 @@ class Player {
     }
     getX() { return this._x; }
     getY() { return this._y; }
+    getPosition() { return [this._x, this._y]; }
     setPosition(x, y) {
         this._x = x; 
         this._y = y;
