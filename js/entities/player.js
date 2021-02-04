@@ -42,11 +42,21 @@ class Player {
             }
         }
     }
+    /**
+     * Handle player input.
+     * @param {event} e browser event? 
+     */
     handleEvent(e) {
-        // process user input
+        // don't accept bad input
         var code = e.keyCode;
         if (!(code in arundelConfig.directionKeyMap)) {
-            return; // don't accept bad input
+            return; 
+        }
+
+        // If the player pressed wait, just draw
+        if (arundelConfig.directionKeyMap[code] == 'wait') {
+            this._draw();
+            return;
         }
 
         var diff = ROT.DIRS[8][arundelConfig.directionKeyMap[code]];

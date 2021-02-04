@@ -22,6 +22,7 @@ const configObject = {
         90: 5, // z
         65: 6, // a
         81: 7, // q
+        83: 'wait' // s
     },
     enemiesPerLevel: 2,
     gameSettings: {
