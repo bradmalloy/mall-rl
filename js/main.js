@@ -37,10 +37,6 @@ const Game = {
         this.map = {};
         this.mapExit = null;
         this.enemies = [];
-        if (this.player) {
-            let oldPlayerPos = this.player.getPosition();
-            console.log("oldPlayerPos: " + oldPlayerPos);
-        }
 
         // Create the map-gen algo
         var digger = new ROT.Map.Digger();
@@ -122,7 +118,6 @@ const Game = {
     _spliceEmptyWalkableCell: function() {
         var index = Math.floor(ROT.RNG.getUniform() * this.walkableCells.length);
         var key = this.walkableCells.splice(index, 1)[0];
-        console.log("spliced an empty walkable at: " + key);
         return key;
     }
 }
