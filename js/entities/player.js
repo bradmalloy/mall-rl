@@ -1,18 +1,25 @@
-import { configObject as arundelConfig } from '../config.js';
+import { configObject as arundelConfig, configObject } from '../config.js';
+import { Game } from '../main.js';
+import { Attack } from './attack.js';
 
 class Player {
-    constructor(x, y, game) {
+    constructor(x, y) {
+        this.ac = 13;
+        this.maxHealth = configObject.gameSettings.player.startingHealth;
+        this.hp = this.maxHealth;
         this._x = x;
         this._y = y;
-        this._game = game;
         this._draw();
     }
     _draw() {
-        this._game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
+        console.debug("Player.draw(): [" + this._x + "," + this._y + "]");
+        Game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
     }
+    /** Called once per tick? */
     act() {
-        this._game.engine.lock(); // lock while waiting for user input
+        Game.engine.lock(); // lock while waiting for user input
         window.addEventListener("keydown", this);
+        // TODO: update status bar on webpage with health, etc
     }
     getX() { return this._x; }
     getY() { return this._y; }
@@ -21,6 +28,19 @@ class Player {
         this._x = x; 
         this._y = y;
         this._draw();
+    }
+    beAttacked(attack) {
+        if (!attack || !typeof(attack, Attack)) {
+            console.error("Can't beAttacked() by a non-Attack or null");
+            return;
+        }
+        if (attack.toHit > this.ac) {
+            this.hp -= attack.damage;
+            console.log("Took " + attack.damage + " damage, new HP: " + this.hp);
+            if (this.hp <= 0) {
+                console.log("dead!");
+            }
+        }
     }
     handleEvent(e) {
         // process user input
@@ -34,27 +54,27 @@ class Player {
         var newY = this._y + diff[1];
 
         var newKey = `${newX},${newY}`;
-        if (!(newKey in this._game.map)) {
+        if (!(newKey in Game.map)) {
             console.log("player trying to move out of bounds to: " + newKey);
             return; // don't move
         }
 
         // Check for map exit
-        if (newKey == this._game.mapExit) {
+        if (newKey == Game.mapExit) {
             console.log("Player found an exit!");
-            this._game.finishLevel();
+            Game.finishLevel();
             return; // avoid setting location to old location
         }
 
         // Fill the previous tile with the thing that was underneath
-        this._game.display.draw(this._x, this._y, this._game.map[`${this._x},${this._y}`]);
+        Game.display.draw(this._x, this._y, Game.map[`${this._x},${this._y}`]);
         
         // Set our location and draw us in the new place
         this._x = newX;
         this._y = newY;
         this._draw();
         window.removeEventListener("keydown", this);
-        this._game.engine.unlock();
+        Game.engine.unlock();
     }
 }
 

@@ -23,7 +23,23 @@ const configObject = {
         65: 6, // a
         81: 7, // q
     },
-    enemiesPerLevel: 0
+    enemiesPerLevel: 2,
+    gameSettings: {
+        player: {
+            startingHealth: 10,
+            toHitDie: 20,
+            toHitMod: 1,
+            dmgDie: 8,
+            dmgMod: 0
+        },
+        thug: {
+            startingHealth: 2,
+            toHitDie: 20,
+            toHitMod: -3,
+            dmgDie: 6,
+            dmgMod: -1
+        }
+    }
 }
 
 export{ configObject };

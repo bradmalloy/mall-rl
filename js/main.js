@@ -31,6 +31,14 @@ const Game = {
         this.engine.start();
     },
 
+    /**
+     * Roll a die and get a result.
+     * @param {number} dieSize the number sides on the dice
+     */
+    rollSimple: function(dieSize) {
+        return 1 + Math.floor(Math.random() * Math.floor(dieSize));
+    },
+
     _generateMap: function() {
         // Clear any old stuff
         this.walkableCells = [];
@@ -51,13 +59,16 @@ const Game = {
             this.map[key] = arundelConfig.tiles.floor;
         }
         digger.create(digCallback.bind(this));
+        // Modify the map
         this._generateLootables();
         this._placeMapExit();
-        this._placeActors();
+        // Draw the map
         this._drawWholeMap();
+        // Draw actors last so we layer them on top of map
+        this._placeAndDrawActors();
     },
 
-    _placeActors: function() {
+    _placeAndDrawActors: function() {
         if (!this.player) {
             console.log("Player doesn't exist, spawning.");
             this.player = this._createBeing(Player);

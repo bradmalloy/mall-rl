@@ -13,6 +13,7 @@ h1, p {
     position: sticky;
     position: -webkit-sticky;
     top: 0;
+    margin-left: 1em;
 }
 
 /* Setup flexbox on main, non-footer, non-header box. */
@@ -22,6 +23,8 @@ h1, p {
     flex-flow: center;
     align-items: stretch;
     min-height: 300px;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 }
 
 /* The game renders in this box */
@@ -32,4 +35,5 @@ h1, p {
 /* Right-hand game menu */
 #gameMenu {
     flex-grow: 1;
+    margin-left: 1em;
 }
