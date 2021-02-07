@@ -12,9 +12,13 @@ class Player {
         this._draw();
     }
     _draw() {
-        Game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
+        Game.map[this.getPositionKey()].addActor(this);
+        //Game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
     }
-    /** Called once per tick? */
+    display() {
+        return arundelConfig.tiles.player;
+    }
+    /** Called once per tick by Scheduler */
     act() {
         Game.engine.lock(); // lock while waiting for user input
         window.addEventListener("keydown", this);
@@ -22,7 +26,7 @@ class Player {
     }
     getX() { return this._x; }
     getY() { return this._y; }
-    getPosition() { return [this._x, this._y]; }
+    getPositionKey() { return `${this._x},${this._y}`; }
     setPosition(x, y) {
         this._x = x; 
         this._y = y;
@@ -60,30 +64,35 @@ class Player {
             return;
         }
 
+        // Otherwise, assume we're moving
         var diff = ROT.DIRS[8][arundelConfig.directionKeyMap[code]];
         var newX = this._x + diff[0];
         var newY = this._y + diff[1];
-
         var newKey = `${newX},${newY}`;
         if (!(newKey in Game.map)) {
             console.log("player trying to move out of bounds to: " + newKey);
             return; // don't move
         }
 
+        // Get the map tile we're coming from
+        let origin = Game.map[this.getPositionKey()];
+        // Get the map tile we're trying to move to
+        let destination = Game.map[newKey];
+
         // Check for map exit
-        if (newKey == Game.mapExit) {
+        if (destination.isMapExit()) {
             console.log("Player found an exit!");
             Game.finishLevel();
             return; // avoid setting location to old location
         }
 
         // Fill the previous tile with the thing that was underneath
-        Game.display.draw(this._x, this._y, Game.map[`${this._x},${this._y}`]);
+        origin.removeActor(this);
         
         // Set our location and draw us in the new place
         this._x = newX;
         this._y = newY;
-        this._draw();
+        destination.addActor(this);
         window.removeEventListener("keydown", this);
         Game.engine.unlock();
     }

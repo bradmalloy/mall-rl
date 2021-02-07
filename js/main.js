@@ -1,6 +1,7 @@
 import { configObject as arundelConfig } from './config.js';
 import { Enemy } from './entities/enemy.js';
 import { Player } from './entities/player.js';
+import { Tile } from './entities/tile.js';
 
 window.loadGame = function() {
     console.log("Initializing Game...");
@@ -8,15 +9,22 @@ window.loadGame = function() {
 }
 
 const Game = {
-
+        // DOM node where the map is displayed
         display: null,
+        // map of keys in 'x,y' format to Tile objects
         map: {},
         walkableCells: [],
+        // The key ([x,y]) of map exit
+        // TODO: drop this!
         mapExit: null,
         player: null,
+        // Simply runs act() on objects the scheduler sends it
         engine: null,
         loot: [],
+        // Holds enemy actors
         enemies: [],
+        // Current "level" of the dungeon
+        depth: 0,
     
     init: function() {
         this.display = new ROT.Display();
@@ -59,7 +67,7 @@ const Game = {
     
             var key = `${x},${y}`;
             this.walkableCells.push(key);
-            this.map[key] = arundelConfig.tiles.floor;
+            this.map[key] = new Tile("floor", x, y);
         }
         digger.create(digCallback.bind(this));
         // Modify the map
@@ -130,7 +138,7 @@ const Game = {
      */
     _placeMapExit: function() {
         var key = this._spliceEmptyWalkableCell();
-        this.map[key] = arundelConfig.tiles.stairs;
+        this.map[key].setMapExit();
         this.mapExit = key;
     },
 
@@ -145,7 +153,8 @@ const Game = {
             var parts = key.split(",");
             var x = parseInt(parts[0]);
             var y = parseInt(parts[1]);
-            this.display.draw(x, y, this.map[key]);
+            let charToDisplay = this.map[key].display();
+            this.display.draw(x, y, charToDisplay);
         }
     },
 

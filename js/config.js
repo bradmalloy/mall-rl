@@ -24,7 +24,7 @@ const configObject = {
         81: 7, // q
         83: 'wait' // s
     },
-    enemiesPerLevel: 2,
+    enemiesPerLevel: 0,
     gameSettings: {
         player: {
             startingHealth: 10,
