@@ -1,14 +1,18 @@
 import { configObject as arundelConfig, configObject } from '../config.js';
 import { Game } from '../main.js';
 import { Attack } from './attack.js';
+import { Actor } from './actor.js';
 
-class Player {
+class Player extends Actor {
     constructor(x, y) {
+        super(x, y, "player");
         this.ac = 13;
         this.maxHealth = configObject.gameSettings.player.startingHealth;
         this.hp = this.maxHealth;
-        this._x = x;
-        this._y = y;
+        this.toHitDie = configObject.gameSettings.player.toHitDie;
+        this.toHitMod = configObject.gameSettings.player.toHitMod;
+        this.dmgDie = configObject.gameSettings.player.dmgDie;
+        this.dmgMod = configObject.gameSettings.player.dmgMod;
         this._placeSelf();
     }
     _placeSelf() {
@@ -47,11 +51,17 @@ class Player {
         }
         if (attack.toHit > this.ac) {
             this.hp -= attack.damage;
-            console.log("Took " + attack.damage + " damage, new HP: " + this.hp);
+            console.log("🙋‍♂️: Took " + attack.damage + " damage, new HP: " + this.hp);
             if (this.hp <= 0) {
                 console.log("dead!");
             }
         }
+    }
+    /**
+     * Generate an Attack based off of stats, items, etc.
+     */
+    _attack() {
+        return new Attack(this, this.toHitDie, this.toHitMod, this.dmgDie, this.dmgMod);
     }
     /**
      * Handle player input.
@@ -78,7 +88,7 @@ class Player {
         var newKey = `${newX},${newY}`;
         if (!(newKey in Game.map)) {
             console.log("player trying to move out of bounds to: " + newKey);
-            return; // don't move
+            return; // don't move, don't stop listening for player input or advance turn
         }
 
         // Get the map tile we're coming from
@@ -92,8 +102,15 @@ class Player {
             Game.finishLevel();
             return; // avoid setting location to old location
         }
+
+        // Check for enemies
+        if (destination.containsEnemy()) {
+            console.info("Player attacking an enemy!");
+            let attack = this._attack();
+            destination.actor.beAttacked(attack);
+        }
         
-        // Add us to the new tile
+        // Add us to the new tile, if it's empty
         if (destination.isEmpty()) {
             // Set our location
             destination.addActor(this);

@@ -2,15 +2,18 @@
 import { configObject as arundelConfig, configObject } from '../config.js';
 import { Game } from '../main.js';
 import { Attack } from './attack.js';
+import { Actor } from './actor.js';
 
-class Enemy {
+class Enemy extends Actor {
     constructor(x, y) {
+        super(x, y, "enemy");
+        this.ac = 10;
+        this.maxHealth = configObject.gameSettings.thug.startingHealth;
+        this.hp = this.maxHealth;
         this.toHitDie = configObject.gameSettings.thug.toHitDie;
         this.toHitMod = configObject.gameSettings.thug.toHitMod;
         this.dmgDie = configObject.gameSettings.thug.dmgDie;
         this.dmgMod = configObject.gameSettings.thug.dmgMod;
-        this._x = x;
-        this._y = y;
         this.stunned = false;
         Game.map[this.getPositionKey()].addActor(this);
     }
@@ -37,6 +40,8 @@ class Enemy {
         }
         // Move and attack
         this._moveAndAttack();
+        // Check for death and cleanup if so
+        this._postTurnCleanup();
     }
     /**
      * Move towards the player by one tile, or attack if
@@ -106,6 +111,17 @@ class Enemy {
         }
     }
     /**
+     * Check if we're dead, and remove us from the game.
+     */
+    _postTurnCleanup() {
+        if (this.hp <= 0) {
+            // Remove us from the board
+            Game.map[this.getPositionKey()].removeActor(this);
+            // Remove us from the Game engine
+            Game.killEnemy(this);
+        }
+    }
+    /**
      * Generate an attack for this monster.
      */
     _attack() {
@@ -116,7 +132,16 @@ class Enemy {
      * @param {Attack} attack the incoming attack object 
      */
     beAttacked(attack) {
-        console.log("Got attacked!");
+        if (!attack || !typeof(attack, Attack)) {
+            console.error("Can't beAttacked() by a non-Attack or null");
+            return;
+        }
+        if (attack.toHit > this.ac) {
+            this.hp -= attack.damage;
+            console.info("🤖: Took " + attack.damage + " damage, new HP: " + this.hp);
+        } else {
+            console.info("🤖: Dodged the attack.");
+        }
     }
 }
 

@@ -48,6 +48,24 @@ const Game = {
     },
 
     /**
+     * Remove an enemy from the scheduler and enemies list. Add a kill to the board.
+     * @param {Enemy} enemy the enemy to remove
+     */
+    killEnemy: function(enemy) {
+        if (!enemy) {
+            console.warn("Can't remove a null enemy...");
+            return;
+        }
+        // Remove from our Game enemy list (might be non-functional after map creation...?)
+        // let toRemove = this.enemies.indexOf(enemy);
+        // if (toRemove > -1) {
+        //     this.enemies.splice(toRemove, 1);
+        // };
+        // Remove from the game engine scheduler (stops it from trying to act() every turn)
+        this.engine._scheduler.remove(enemy);
+    },
+
+    /**
      * Generate a new map with a random layout, then place loot and actors.
      */
     _generateMap: function() {

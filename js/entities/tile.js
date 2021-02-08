@@ -23,6 +23,9 @@ class Tile {
     isEmpty() {
         return this.actor == null;
     }
+    containsEnemy() {
+        return (this.actor && (this.actor.getActorType() == "enemy"));
+    }
     addActor(actor) {
         if (this.actor) {
             // If we already have someone in the tile, don't add another
@@ -30,7 +33,6 @@ class Tile {
         }
         this.actor = actor;
         Game.display.draw(this._x, this._y, this.display());
-        console.debug(`🟢 Tile ${this.getPositionKey()} now has actor ${actor.represent()}`);
     }
     removeActor(actor) {
         if (actor == this.actor) {

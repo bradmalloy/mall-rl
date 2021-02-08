@@ -2,7 +2,7 @@ class Attack {
     /**
      * 
      * @param {object} origin the thing doing the attacking
-     * @param {number} toHitDie die size, eg: for 1d6, 6
+     * @param {number} toHitDie die size, normally 1d20 -> 20
      * @param {number} toHitMod positive or negative modifier to hit
      * @param {number} dmgDie  die size, eg: for 1d12, 12
      * @param {number} dmgMod positive or negative damage modifier
