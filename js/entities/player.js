@@ -9,25 +9,37 @@ class Player {
         this.hp = this.maxHealth;
         this._x = x;
         this._y = y;
-        this._draw();
+        this._placeSelf();
     }
-    _draw() {
-        Game.display.draw(this._x, this._y, arundelConfig.tiles.player, arundelConfig.colors.player);
+    _placeSelf() {
+        Game.map[this.getPositionKey()].addActor(this);
     }
-    /** Called once per tick? */
+    represent() {
+        return arundelConfig.tiles.player;
+    }
+    /** Called once per tick by Scheduler */
     act() {
         Game.engine.lock(); // lock while waiting for user input
-        window.addEventListener("keydown", this);
-        // TODO: update status bar on webpage with health, etc
+        window.addEventListener("keydown", this); // handleEvent when the player presses a key
     }
     getX() { return this._x; }
     getY() { return this._y; }
-    getPosition() { return [this._x, this._y]; }
+    getPositionKey() { return `${this._x},${this._y}`; }
+    /**
+     * Set our internal position and place us in the Tile.
+     * @param {number} x 
+     * @param {number} y 
+     */
     setPosition(x, y) {
         this._x = x; 
         this._y = y;
-        this._draw();
+        this._placeSelf();
     }
+    /**
+     * Called by external actors, or the Game, when attempting
+     * to hurt the Player.
+     * @param {Attack} attack 
+     */
     beAttacked(attack) {
         if (!attack || !typeof(attack, Attack)) {
             console.error("Can't beAttacked() by a non-Attack or null");
@@ -46,7 +58,7 @@ class Player {
      * @param {event} e browser event? 
      */
     handleEvent(e) {
-        // don't accept bad input
+        // Reject bad input early
         var code = e.keyCode;
         if (!(code in arundelConfig.directionKeyMap)) {
             return; 
@@ -54,36 +66,43 @@ class Player {
 
         // If the player pressed wait, just draw
         if (arundelConfig.directionKeyMap[code] == 'wait') {
-            this._draw();
             window.removeEventListener("keydown", this);
             Game.engine.unlock();
             return;
         }
 
+        // Otherwise, assume we're moving
         var diff = ROT.DIRS[8][arundelConfig.directionKeyMap[code]];
         var newX = this._x + diff[0];
         var newY = this._y + diff[1];
-
         var newKey = `${newX},${newY}`;
         if (!(newKey in Game.map)) {
             console.log("player trying to move out of bounds to: " + newKey);
             return; // don't move
         }
 
+        // Get the map tile we're coming from
+        let origin = Game.map[this.getPositionKey()];
+        // Get the map tile we're trying to move to
+        let destination = Game.map[newKey];
+
         // Check for map exit
-        if (newKey == Game.mapExit) {
+        if (destination.isMapExit() && destination.isEmpty()) {
             console.log("Player found an exit!");
             Game.finishLevel();
             return; // avoid setting location to old location
         }
-
-        // Fill the previous tile with the thing that was underneath
-        Game.display.draw(this._x, this._y, Game.map[`${this._x},${this._y}`]);
         
-        // Set our location and draw us in the new place
-        this._x = newX;
-        this._y = newY;
-        this._draw();
+        // Add us to the new tile
+        if (destination.isEmpty()) {
+            // Set our location
+            destination.addActor(this);
+            origin.removeActor(this);
+            this._x = newX;
+            this._y = newY;
+        }
+
+        // Cleanup the game engine
         window.removeEventListener("keydown", this);
         Game.engine.unlock();
     }
