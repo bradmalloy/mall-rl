@@ -60,9 +60,9 @@ class Enemy extends Actor {
         if (path.length <= 1) {
             // Attack the player
             let attack = this._attack();
-            console.log(attack);
+            console.debug(attack);
             this.stunned = true;
-            console.log("Enemy attacking, stunning self.");
+            console.info("🤖 attack! 🤖 self-stunning.");
             Game.player.beAttacked(attack);
         } else {
             // Try to move towards the player

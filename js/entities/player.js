@@ -51,9 +51,9 @@ class Player extends Actor {
         }
         if (attack.toHit > this.ac) {
             this.hp -= attack.damage;
-            console.log("🙋‍♂️: Took " + attack.damage + " damage, new HP: " + this.hp);
+            console.info("🙋‍♂️: Took " + attack.damage + " damage, new HP: " + this.hp);
             if (this.hp <= 0) {
-                console.log("dead!");
+                console.info("🤦‍♂️ dead! game over, man.");
             }
         }
     }
@@ -87,7 +87,7 @@ class Player extends Actor {
         var newY = this._y + diff[1];
         var newKey = `${newX},${newY}`;
         if (!(newKey in Game.map)) {
-            console.log("player trying to move out of bounds to: " + newKey);
+            console.debug("player trying to move out of bounds to: " + newKey);
             return; // don't move, don't stop listening for player input or advance turn
         }
 
@@ -98,7 +98,7 @@ class Player extends Actor {
 
         // Check for map exit
         if (destination.isMapExit() && destination.isEmpty()) {
-            console.log("Player found an exit!");
+            console.info("🙋‍♂️ found an exit!");
             Game.finishLevel();
             return; // avoid setting location to old location
         }
