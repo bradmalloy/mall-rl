@@ -20,9 +20,17 @@ class Tile {
         this.tileType = "stairs";
         this._isMapExit = true;
     }
+    isEmpty() {
+        return this.actor == null;
+    }
     addActor(actor) {
+        if (this.actor) {
+            // If we already have someone in the tile, don't add another
+            console.debug(`⛔ Can't add ${actor.represent()} in tile ${this.getPositionKey()}, already has ${this.actor.represent()}`);
+        }
         this.actor = actor;
         Game.display.draw(this._x, this._y, this.display());
+        console.debug(`🟢 Tile ${this.getPositionKey()} now has actor ${actor.represent()}`);
     }
     removeActor(actor) {
         if (actor == this.actor) {
@@ -36,10 +44,11 @@ class Tile {
         let output = arundelConfig.tiles[this.tileType];
         // overrides, like if the player or an enemy is in this tile
         if (this.actor) {
-            output = this.actor.display();
+            output = this.actor.represent();
         }
         return output;
     }
+    getPositionKey() { return `${this._x},${this._y}`; }
 }
 
 export { Tile };

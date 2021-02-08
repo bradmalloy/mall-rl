@@ -24,7 +24,7 @@ const Game = {
         // Holds enemy actors
         enemies: [],
         // Current "level" of the dungeon
-        depth: 0,
+        depth: 1,
     
     init: function() {
         this.display = new ROT.Display();
@@ -128,8 +128,15 @@ const Game = {
      * Called by the Player when they reach the level exit.
      */
     finishLevel: function() {
+        // disallow actions while this is happening
         this.engine.lock();
+        // create a new map and place actors, etc
         this._generateMap();
+        // increment the level counter
+        this.depth++;
+        // draw stats (level, hp, etc) on the web page
+        this.updateGUI();
+        // allow the game to continue
         this.engine.unlock();
     },
 
@@ -140,6 +147,17 @@ const Game = {
         var key = this._spliceEmptyWalkableCell();
         this.map[key].setMapExit();
         this.mapExit = key;
+    },
+
+    /**
+     * Update the web page with the current important stats, including:
+     * - dungeon level
+     * - player HP
+     * - player kills
+     * - etc
+     */
+    updateGUI: function() {
+        document.getElementById("levelHeader").innerText = `Level ${this.depth}`;
     },
 
     /**
