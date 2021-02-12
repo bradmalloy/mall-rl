@@ -14,9 +14,6 @@ const Game = {
         // map of keys in 'x,y' format to Tile objects
         map: {},
         walkableCells: [],
-        // The key ([x,y]) of map exit
-        // TODO: drop this!
-        mapExit: null,
         player: null,
         // Simply runs act() on objects the scheduler sends it
         engine: null,
@@ -32,6 +29,7 @@ const Game = {
         this._generateMap();
         var scheduler = new ROT.Scheduler.Simple();
         scheduler.add(this.player, true);
+        // Also add them to the scheduler
         this.enemies.forEach((enemy) => {
             scheduler.add(enemy, true);
         });
@@ -56,11 +54,6 @@ const Game = {
             console.warn("Can't remove a null enemy...");
             return;
         }
-        // Remove from our Game enemy list (might be non-functional after map creation...?)
-        // let toRemove = this.enemies.indexOf(enemy);
-        // if (toRemove > -1) {
-        //     this.enemies.splice(toRemove, 1);
-        // };
         // Remove from the game engine scheduler (stops it from trying to act() every turn)
         this.engine._scheduler.remove(enemy);
     },
@@ -70,10 +63,12 @@ const Game = {
      */
     _generateMap: function() {
         // Clear any old stuff
-        this.walkableCells = [];
+        this.walkableCells.length = 0;
         this.map = {};
-        this.mapExit = null;
-        this.enemies = [];
+        this.enemies.forEach(enemy => {
+            this.engine._scheduler.remove(enemy);
+        })
+        this.enemies.length = 0;
 
         // Create the map-gen algo
         var digger = new ROT.Map.Digger();
@@ -99,6 +94,7 @@ const Game = {
 
     /**
      * Create or reposition all actors on the map.
+     * Creates and schedules enemies according to config.
      */
     _placeAndDrawActors: function() {
         if (!this.player) {
@@ -113,7 +109,9 @@ const Game = {
             this.player.setPosition(x, y);
         }
         for (let i = 0; i < arundelConfig.enemiesPerLevel; i++) {
-            this.enemies.push(this._createBeing(Enemy));
+            let enemy = this._createBeing(Enemy);
+            this.enemies.push(enemy);
+            this.engine?._scheduler?.add(enemy, true);
         }
     },
 
@@ -163,7 +161,6 @@ const Game = {
     _placeMapExit: function() {
         var key = this._spliceEmptyWalkableCell();
         this.map[key].setMapExit();
-        this.mapExit = key;
     },
 
     /**

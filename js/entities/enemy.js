@@ -1,5 +1,5 @@
 // TODO: undo importing as 2 things?
-import { arundelConfig as arundelConfig } from '../config.js';
+import { configObject as arundelConfig } from '../config.js';
 import { Game } from '../main.js';
 import { Attack } from './attack.js';
 import { Actor } from './actor.js';
