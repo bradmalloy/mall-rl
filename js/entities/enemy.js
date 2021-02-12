@@ -1,5 +1,5 @@
 // TODO: undo importing as 2 things?
-import { configObject as arundelConfig, configObject } from '../config.js';
+import { arundelConfig as arundelConfig } from '../config.js';
 import { Game } from '../main.js';
 import { Attack } from './attack.js';
 import { Actor } from './actor.js';
@@ -8,12 +8,12 @@ class Enemy extends Actor {
     constructor(x, y) {
         super(x, y, "enemy");
         this.ac = 10;
-        this.maxHealth = configObject.gameSettings.thug.startingHealth;
+        this.maxHealth = arundelConfig.gameSettings.thug.startingHealth;
         this.hp = this.maxHealth;
-        this.toHitDie = configObject.gameSettings.thug.toHitDie;
-        this.toHitMod = configObject.gameSettings.thug.toHitMod;
-        this.dmgDie = configObject.gameSettings.thug.dmgDie;
-        this.dmgMod = configObject.gameSettings.thug.dmgMod;
+        this.toHitDie = arundelConfig.gameSettings.thug.toHitDie;
+        this.toHitMod = arundelConfig.gameSettings.thug.toHitMod;
+        this.dmgDie = arundelConfig.gameSettings.thug.dmgDie;
+        this.dmgMod = arundelConfig.gameSettings.thug.dmgMod;
         this.stunned = false;
         Game.map[this.getPositionKey()].addActor(this);
     }
@@ -115,6 +115,7 @@ class Enemy extends Actor {
      */
     _postTurnCleanup() {
         if (this.hp <= 0) {
+            console.info("🤖💀");
             // Remove us from the board
             Game.map[this.getPositionKey()].removeActor(this);
             // Remove us from the Game engine
@@ -139,6 +140,8 @@ class Enemy extends Actor {
         if (attack.toHit > this.ac) {
             this.hp -= attack.damage;
             console.info("🤖: Took " + attack.damage + " damage, new HP: " + this.hp);
+            // If we get hit, immediately check for death
+            this._postTurnCleanup();
         } else {
             console.info("🤖: Dodged the attack.");
         }

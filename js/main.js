@@ -4,7 +4,7 @@ import { Player } from './entities/player.js';
 import { Tile } from './entities/tile.js';
 
 window.loadGame = function() {
-    console.log("Initializing Game...");
+    console.info("Initializing Game...");
     Game.init();
 }
 
@@ -102,16 +102,15 @@ const Game = {
      */
     _placeAndDrawActors: function() {
         if (!this.player) {
-            console.log("Player doesn't exist, spawning.");
+            console.debug("Player doesn't exist, spawning.");
             this.player = this._createBeing(Player);
         } else {
             var key = this._spliceEmptyWalkableCell();
-            console.log("Player already exists, repositioning to: " + key);
+            console.debug("Player already exists, repositioning to: " + key);
             var parts = key.split(",");
             var x = parseInt(parts[0]);
             var y = parseInt(parts[1]);
             this.player.setPosition(x, y);
-            console.log(this.player);
         }
         for (let i = 0; i < arundelConfig.enemiesPerLevel; i++) {
             this.enemies.push(this._createBeing(Enemy));
