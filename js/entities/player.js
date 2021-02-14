@@ -2,10 +2,12 @@ import { configObject as arundelConfig, configObject } from '../config.js';
 import { Game } from '../main.js';
 import { Attack } from './attack.js';
 import { Actor } from './actor.js';
+import { Inventory } from './inventorySystem.js';
 
 class Player extends Actor {
     constructor(x, y) {
         super(x, y, "player");
+        // Stats
         this.ac = 13;
         this.maxHealth = configObject.gameSettings.player.startingHealth;
         this.hp = this.maxHealth;
@@ -13,6 +15,11 @@ class Player extends Actor {
         this.toHitMod = configObject.gameSettings.player.toHitMod;
         this.dmgDie = configObject.gameSettings.player.dmgDie;
         this.dmgMod = configObject.gameSettings.player.dmgMod;
+
+        // Items & inventory
+        this.inventory = new Inventory();
+
+        // Put self on map
         this._placeSelf();
     }
     _placeSelf() {
@@ -61,6 +68,7 @@ class Player extends Actor {
      * Generate an Attack based off of stats, items, etc.
      */
     _attack() {
+        this.toHitMod += this.inventory.getAllItemStats("toHit");
         return new Attack(this, this.toHitDie, this.toHitMod, this.dmgDie, this.dmgMod);
     }
     /**
