@@ -1,5 +1,5 @@
 const configObject = {
-    maxLootableSpots: 0,
+    maxLootableSpots: 2,
     tiles: {
         floor: ".",
         lootable: "*",
@@ -22,7 +22,8 @@ const configObject = {
         90: 5, // z
         65: 6, // a
         81: 7, // q
-        83: 'wait' // s
+        83: 'wait', // s
+        71: 'get' // g
     },
     enemiesPerLevel: 2,
     gameSettings: {

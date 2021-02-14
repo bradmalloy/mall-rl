@@ -11,6 +11,7 @@ class Tile {
         this._x = x;
         this._y = y;
 
+        this.item = null;
         this.actor = null;
         this._isMapExit = false;
         this.walkable = true;
@@ -42,9 +43,22 @@ class Tile {
         }
         Game.display.draw(this._x, this._y, this.display());
     }
+    addItem(item) {
+        console.debug(`Added ${item} to the tile at ${this.getPositionKey()}`);
+        this.item = item;
+    }
+    pickupItem() {
+        let output = this.item;
+        this.item = null;
+        return output;
+    }
     display() {
         let output = arundelConfig.tiles[this.tileType];
         // overrides, like if the player or an enemy is in this tile
+        if (this.item) {
+            output = this.item.represent();
+        }
+        // Items are less important than actors
         if (this.actor) {
             output = this.actor.represent();
         }

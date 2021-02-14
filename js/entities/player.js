@@ -68,8 +68,10 @@ class Player extends Actor {
      * Generate an Attack based off of stats, items, etc.
      */
     _attack() {
-        this.toHitMod += this.inventory.getAllItemStats("toHit");
-        return new Attack(this, this.toHitDie, this.toHitMod, this.dmgDie, this.dmgMod);
+        let itemToHitMod = this.inventory.getAllItemStats("toHit");
+        let totalToHitMod = this.toHitMod + itemToHitMod
+        console.debug(`Player has a toHitMod of ${totalToHitMod} (inc ${itemToHitMod} from items)`);
+        return new Attack(this, this.toHitDie, totalToHitMod, this.dmgDie, this.dmgMod);
     }
     /**
      * Handle player input.
@@ -84,6 +86,17 @@ class Player extends Actor {
 
         // If the player pressed wait, just draw
         if (arundelConfig.directionKeyMap[code] == 'wait') {
+            window.removeEventListener("keydown", this);
+            Game.engine.unlock();
+            return;
+        }
+
+        // If the player pressed "get" (pickup item), then just do that
+        if (arundelConfig.directionKeyMap[code] == 'get') {
+            let item = Game.map[this.getPositionKey()].pickupItem();
+            console.debug(item);
+            // TODO: separate add and equip
+            this.inventory.add(item, "head");
             window.removeEventListener("keydown", this);
             Game.engine.unlock();
             return;

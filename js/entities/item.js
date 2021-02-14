@@ -1,6 +1,6 @@
 class Item {
-    constructor(toHitMod) {
-        this.toHitMod = toHitMod;
+    constructor(statType, statModifier) {
+        this[statType] = statModifier;
     }
 
     /**
@@ -13,6 +13,13 @@ class Item {
             output = this[statType];
         }
         return output;
+    }
+
+    /**
+     * Return item's icon
+     */
+    represent() {
+        return "*";
     }
 }
 

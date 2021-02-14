@@ -2,6 +2,7 @@ import { configObject as arundelConfig } from './config.js';
 import { Enemy } from './entities/enemy.js';
 import { Player } from './entities/player.js';
 import { Tile } from './entities/tile.js';
+import { Item } from './entities/item.js';
 
 window.loadGame = function() {
     console.info("Initializing Game...");
@@ -17,7 +18,6 @@ const Game = {
         player: null,
         // Simply runs act() on objects the scheduler sends it
         engine: null,
-        loot: [],
         // Holds enemy actors
         enemies: [],
         // Current "level" of the dungeon
@@ -83,13 +83,23 @@ const Game = {
             this.map[key] = new Tile("floor", x, y);
         }
         digger.create(digCallback.bind(this));
-        // Modify the map
-        this._generateLootables();
+
+        // Place the exit
         this._placeMapExit();
-        // Draw the map
-        this._drawWholeMap();
+        // Place loot
+        this._placeLoot();
         // Draw actors last so we layer them on top of map
         this._placeAndDrawActors();
+        // Draw the map
+        this._drawWholeMap();
+    },
+
+    _placeLoot: function() {
+        for (let i = 0; i < arundelConfig.maxLootableSpots; i++) {
+            let key = this._spliceEmptyWalkableCell();
+            this.map[key].addItem(new Item("toHit", 20));
+            console.debug(`Added loot to ${key}`);
+        }
     },
 
     /**
@@ -127,16 +137,6 @@ const Game = {
         var x = parseInt(parts[0]);
         var y = parseInt(parts[1]);
         return new being(x, y);
-    },
-
-    /**
-     * Change the map to put down items (not used currently).
-     */
-    _generateLootables: function() {
-        for (var i = 0; i < arundelConfig.maxLootableSpots; i++) {
-            var key = this._spliceEmptyWalkableCell();
-            this.map[key] = arundelConfig.tiles.lootable;
-        }
     },
 
     /**
