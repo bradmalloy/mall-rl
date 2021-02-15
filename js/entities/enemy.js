@@ -62,7 +62,7 @@ class Enemy extends Actor {
             let attack = this._attack();
             console.debug(attack);
             this.stunned = true;
-            console.info("🤖 attack! 🤖 self-stunning.");
+            Game.addLogMessage("Enemy attacks! The enemy is recovering from it's swing.");
             Game.player.beAttacked(attack);
         } else {
             // Try to move towards the player
@@ -115,7 +115,7 @@ class Enemy extends Actor {
      */
     _postTurnCleanup() {
         if (this.hp <= 0) {
-            console.info("🤖💀");
+            Game.addLogMessage("Enemy died! 💀");
             // Remove us from the board
             Game.map[this.getPositionKey()].removeActor(this);
             // Remove us from the Game engine
@@ -139,11 +139,11 @@ class Enemy extends Actor {
         }
         if (attack.toHit > this.ac) {
             this.hp -= attack.damage;
-            console.info("🤖: Took " + attack.damage + " damage, new HP: " + this.hp);
+            Game.addLogMessage("Enemy took " + attack.damage + " damage, new HP: " + this.hp);
             // If we get hit, immediately check for death
             this._postTurnCleanup();
         } else {
-            console.info("🤖: Dodged the attack.");
+            Game.addLogMessage("Enemy dodged the attack.");
         }
     }
 }

@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Arundel Center: A tiny, mall-shaped roguelike in the browser</title>
+        <title>Tiny Rotten Roguelike</title>
         <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
         <script src="js/main.js" type="module"></script>
 
@@ -21,20 +21,33 @@
             </div>
             <div id="gameMenu">
                 <div class="nes-container with-title is-rounded">
-                    <p class="title">Menu</p>
-                    <p>Welcome to the Arundel Center mall!</p>
+                    <p class="title">Info</p>
+                    <p>Welcome to my tiny roguelike!</p>
                     <p>
-                        Direction keys  (clockwise) for all 8 directions are: W, E, D, C, X, Z, A, Q. 
-                        To wait for a turn, press: S. Enemy thugs are represented by the character 't'.
-                    </p>                    
+                        Direction keys (clockwise) for all 8 directions are: W, E, D, C, X, Z, A, Q. 
+                        To wait for a turn, press: S. Pickup items ("*") with G. 
+                        Enemy thugs are represented by the character 't'.
+                    </p>
+                    <p>
+                        I made this to learn how to use <a href="https://ondras.github.io/rot.js/hp/">rot.js</a>, an absolutely
+                        delightful Javascript library for writing roguelikes. If you're at all interested in learning to make
+                        roguelikes, rot.js provides loads of utilities, but isn't opinionated about how you use them. I'm also using
+                        <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a> for the styling.
+                    </p>
                 </div>
                 <div class="nes-container with-title" id="inventoryWrapper">
-                    <p class="title">Inventory</p>
+                    <p class="title" id="bagTitle">Inventory</p>
                     <div class="lists">
                         <ul class="nes-list is-disc" id="bagList">
                             
                         </ul>
                     </div>
+                </div>
+                <div class="nes-container" id="combatLog" style="margin-top: 1em;"></div>
+                <div class="nes-container with-title" id="socialPlug" style="margin-top: 1em;">
+                    <p class="title">Social</p>
+                    <i class="nes-icon twitter is-large"></i> 
+                    <p>Follow <a href="https://twitter.com/brad_io">@brad_io</a> for more indie gamedev stuff</p>
                 </div>
             </div>
         </div>
@@ -42,18 +55,5 @@
 
         </footer>
     </body>
-    <!-- Delete this when done with dev: shows keydown codes. -->
-    <script type="text/javascript">
-        window.addEventListener("keydown", function(e) {
-            var code = e.keyCode;
-
-            var vk = "?"; /* find the corresponding constant */
-            for (var name in ROT.KEYS) {
-                if (ROT.KEYS[name] == code && name.indexOf("VK_") == 0) { vk = name; }
-            }
-
-            console.debug("Keydown: code is " + code + " (" + vk + ")");
-        });
-    </script>
 </html>
 

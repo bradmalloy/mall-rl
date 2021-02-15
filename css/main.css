@@ -8,14 +8,6 @@ h1, p {
     font-family: 'Press Start 2P';
 }
 
-/* Sticky header */
-#header {
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    margin-left: 1em;
-}
-
 /* Setup flexbox on main, non-footer, non-header box. */
 #wrapper {
     display: flex;
@@ -40,5 +32,17 @@ h1, p {
 
 /* Space inventory below the infobox/gameMenu */
 #inventoryWrapper {
+    margin-top: 0.5em;
+}
+
+/* Space inventory below the infobox/gameMenu */
+#combatLog {
+    margin-top: 0.5em;
+    overflow: scroll;
+    height: 200px;
+}
+
+/* Space inventory below the infobox/gameMenu */
+#socialPlug {
     margin-top: 0.5em;
 }

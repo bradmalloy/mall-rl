@@ -1,6 +1,8 @@
 class Item {
-    constructor(statType, statModifier) {
+    constructor(statType, statModifier, slotType) {
         this[statType] = statModifier;
+        this.statType = statType;
+        this.slotType = slotType;
     }
 
     /**
@@ -15,6 +17,10 @@ class Item {
         return output;
     }
 
+    getSlotType() {
+        return this.slotType;
+    }
+
     /**
      * Return item's icon
      */
@@ -23,7 +29,7 @@ class Item {
     }
 
     getDescription() {
-        return `An item.`
+        return `Item: slot ${this.slotType}, grants ${this[this.statType]} ${this.statType}`;
     }
 }
 

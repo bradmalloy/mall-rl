@@ -2,12 +2,14 @@ import { configObject as arundelConfig } from './config.js';
 import { Enemy } from './entities/enemy.js';
 import { Player } from './entities/player.js';
 import { Tile } from './entities/tile.js';
-import { Item } from './entities/item.js';
+import { ItemFactory } from './entities/itemFactory.js';
 
 window.loadGame = function() {
-    console.info("Initializing Game...");
+    Game.addLogMessage("Game is starting. Good luck!");
     Game.init();
 }
+
+const combatLogElement = document.getElementById("combatLog");
 
 /**
  * See the Inventory clas for details.
@@ -31,6 +33,7 @@ const Game = {
         enemies: [],
         // Current "level" of the dungeon
         depth: 1,
+        itemFactory: null,
     
     init: function() {
         this.display = new ROT.Display();
@@ -79,6 +82,7 @@ const Game = {
         })
         this.enemies.length = 0;
 
+
         // Create the map-gen algo
         var digger = new ROT.Map.Digger();
     
@@ -93,6 +97,9 @@ const Game = {
         }
         digger.create(digCallback.bind(this));
 
+        // Create the item factory for this level
+        this.itemFactory = new ItemFactory(this.depth);
+
         // Place the exit
         this._placeMapExit();
         // Place loot
@@ -106,7 +113,8 @@ const Game = {
     _placeLoot: function() {
         for (let i = 0; i < arundelConfig.maxLootableSpots; i++) {
             let key = this._spliceEmptyWalkableCell();
-            this.map[key].addItem(new Item("toHit", 20));
+            let toPlace = this.itemFactory.getRandomItem();
+            this.map[key].addItem(toPlace);
             console.debug(`Added loot to ${key}`);
         }
     },
@@ -181,6 +189,22 @@ const Game = {
      */
     updateGUI: function() {
         document.getElementById("levelHeader").innerText = `Level ${this.depth}`;
+    },
+
+    endGame: function() {
+        this.engine._scheduler.remove(this.player);
+        this.player = null;
+        Game.engine.lock();
+    },
+
+    /**
+     * Add a message to the combat log.
+     * @param {string} message player-facing message
+     */
+    addLogMessage: function(message) {
+        let paragraph = document.createElement("p");
+        paragraph.innerText = message;
+        combatLogElement.insertBefore(paragraph, combatLogElement.children[0]);
     },
 
     /**

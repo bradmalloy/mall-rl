@@ -58,9 +58,10 @@ class Player extends Actor {
         }
         if (attack.toHit > this.ac) {
             this.hp -= attack.damage;
-            console.info("🙋‍♂️: Took " + attack.damage + " damage, new HP: " + this.hp);
+            Game.addLogMessage("You took " + attack.damage + " damage, new HP: " + this.hp);
             if (this.hp <= 0) {
-                console.info("🤦‍♂️ dead! game over, man.");
+                Game.addLogMessage("You died! Game over, man.");
+                Game.endGame();
             }
         }
     }
@@ -94,9 +95,7 @@ class Player extends Actor {
         // If the player pressed "get" (pickup item), then just do that
         if (arundelConfig.directionKeyMap[code] == 'get') {
             let item = Game.map[this.getPositionKey()].pickupItem();
-            console.debug(item);
-            // TODO: separate add and equip
-            this.inventory.add(item, "head");
+            this.inventory.add(item);
             window.removeEventListener("keydown", this);
             Game.engine.unlock();
             return;
@@ -119,14 +118,14 @@ class Player extends Actor {
 
         // Check for map exit
         if (destination.isMapExit() && destination.isEmpty()) {
-            console.info("🙋‍♂️ found an exit!");
+            Game.addLogMessage("Congrats, descending deeper...");
             Game.finishLevel();
             return; // avoid setting location to old location
         }
 
         // Check for enemies
         if (destination.containsEnemy()) {
-            console.info("Player attacking an enemy!");
+            Game.addLogMessage("Player is attacking an enemy!");
             let attack = this._attack();
             destination.actor.beAttacked(attack);
         }

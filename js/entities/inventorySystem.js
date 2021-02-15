@@ -1,5 +1,11 @@
+import { Game } from "../main";
+
 // The <ul> to add children to
 const bagUiElementTag = "bagList";
+// The "window" title, should be "Inventory X/26 slots"
+const bagUiTitleTag = "bagTitle";
+
+const inventoryLimit = 26;
 
 class Inventory {
     constructor() {
@@ -13,15 +19,21 @@ class Inventory {
         this.rightFinger = null;
         // Things picked up go in the bag
         this.bag = {};
+        this.bagCount = 0;
     }
 
     /**
      * Add an item to the bag. Returns the key (ex: A, B, Z, AA) the item was stored in.
+     * Stops at 26, since the _getNextItemKey breaks and I don't want to fix it.
      * @param {Item} item to be added
      */
     add(item) {
+        if (this.bagCount >= 26) {
+            return null;
+        }
         let key = this._getNextItemKey();
         this.bag[key] = item;
+        this.bagCount++;
         this._addToBagUi(key, item);
         return key;
     }
@@ -38,12 +50,13 @@ class Inventory {
                 let putAway = this[slot];
                 this[slot] = null;
                 let putAwayItemKey = this.add(putAway);
-                console.debug(`Item was already equipped to slot ${slot}, put it away as ${putAwayItemKey}`)
+                Game.addLogMessage(`Item was already equipped to slot ${slot}, put it away as ${putAwayItemKey}`);
             }
             this[slot] = item;
             this.bag[itemKey] = null;
+            this.bagCount--;
             this._removeFromBagUi(itemKey);
-            console.debug(`Equipped ${item} in slot ${slot}`);
+            Game.addLogMessage(`Equipped ${item} in slot ${slot}`);
         } else {
             console.warn(`Couldn't equip itemKey ${itemKey}, was null`);
         }
@@ -102,8 +115,10 @@ class Inventory {
         let ul = document.getElementById(bagUiElementTag);
         var li = document.createElement("li");
         li.setAttribute("id", `bagItem-${itemKey}`);
-        li.innerHTML = `<div class="nes-pointer" onclick="equip('${itemKey}', 'head');">[${itemKey}] ${item.getDescription()}</div>`
+        li.innerHTML = `<div class="nes-pointer" onclick="equip('${itemKey}', '${item.getSlotType()}');">[${itemKey}] ${item.getDescription()}</div>`
         ul.appendChild(li);
+        let title = document.getElementById(bagUiTitleTag);
+        title.innerText = `Inventory ${this.bagCount}/26`;
     }
 
     /**
@@ -114,6 +129,14 @@ class Inventory {
     _removeFromBagUi(itemKey) {
         let toRemove = document.getElementById(`bagItem-${itemKey}`);
         toRemove.remove();
+        let title = document.getElementById(bagUiTitleTag);
+        title.innerText = `Inventory ${this.bagCount}/26`;
+    }
+
+    _updateBodyUi() {
+        if (this.head != null) {
+
+        }
     }
 }
 
