@@ -9,6 +9,15 @@ window.loadGame = function() {
     Game.init();
 }
 
+/**
+ * See the Inventory clas for details.
+ * @param {string} itemKey 
+ * @param {string} slot 
+ */
+window.equip = function(itemKey, slot) {
+    Game.player.inventory.equip(itemKey, slot);
+}
+
 const Game = {
         // DOM node where the map is displayed
         display: null,

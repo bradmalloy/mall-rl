@@ -21,6 +21,10 @@ class Item {
     represent() {
         return "*";
     }
+
+    getDescription() {
+        return `An item.`
+    }
 }
 
 export { Item };
